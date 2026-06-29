@@ -8,7 +8,9 @@ dic_de_cores = {
     "Vermelho": "red",
     "Verde": "green",
     "Azul": "blue",
-    "Cor de burro quando foge":"#6F752F" 
+    "Cor de burro quando foge":"#6F752F",
+    "Amarelo": "yellow",
+    "Rosa": "pink"
 }
 
 
@@ -16,37 +18,39 @@ dic_de_cores = {
 def iniciar_figura_nova(event): 
     global figura_nova
     cor_selecionada = cores_var.get() #pega a cor selecionada no menu
+    cor_contorno = contorno_var.get() #pegar a cor do contorno selecionada no menu
 
     if tipo_figura_var.get() == 'Linha':
-        figura_nova = ("linha", (event.x, event.y, event.x, event.y), cor_selecionada)
+        figura_nova = ("linha", (event.x, event.y, event.x, event.y), cor_selecionada, cor_contorno)
     elif tipo_figura_var.get() == "Rabisco":
-        figura_nova = ("rabisco", [(event.x, event.y)], cor_selecionada)
+        figura_nova = ("rabisco", [(event.x, event.y)], cor_selecionada, cor_contorno)
     elif tipo_figura_var.get() == "Oval":
-        figura_nova = ("Oval", (event.x, event.y, event.x, event.y), cor_selecionada) #aqui estamos adicionando a opção oval igual fizemos com as outras formas
+        figura_nova = ("Oval", (event.x, event.y, event.x, event.y), cor_selecionada, cor_contorno) #aqui estamos adicionando a opção oval igual fizemos com as outras formas
     elif tipo_figura_var.get() == "Retângulo":
-        figura_nova = ("Retângulo", (event.x, event.y, event.x, event.y), cor_selecionada)
+        figura_nova = ("Retângulo", (event.x, event.y, event.x, event.y), cor_selecionada, cor_contorno)
     elif tipo_figura_var.get() == "Quadrado":
-        figura_nova = ("Quadrado", (event.x, event.y, event.x, event.y), cor_selecionada)
+        figura_nova = ("Quadrado", (event.x, event.y, event.x, event.y), cor_selecionada, cor_contorno)
     else : # msm coisa de fazer tipo_figura_var.get() == "Circulo"
-        figura_nova = ("Circulo", (event.x, event.y, event.x, event.y), cor_selecionada)
+        figura_nova = ("Circulo", (event.x, event.y, event.x, event.y), cor_selecionada, cor_contorno)
 
 # Quando mouse é movido com o botão pressionado
 def atualizar_figura_nova(event):
     global figura_nova
     cor_atual = cores_var.get() #pega a cor selecionada
+    contorno_atual = contorno_var.get()
 
     #aq temos que adicionar um novo parametro em todos, cor_atual
     if figura_nova[0] == "rabisco":
         figura_nova[1].append((event.x, event.y))
-        figura_nova = ("rabisco", figura_nova[1], cor_atual)
+        figura_nova = ("rabisco", figura_nova[1], cor_atual, contorno_atual)
     elif figura_nova[0] == "linha":
-        figura_nova = ("linha", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual)
+        figura_nova = ("linha", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual, contorno_atual)
     elif figura_nova[0] == "Circulo":
-        figura_nova = ("Circulo", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual)
+        figura_nova = ("Circulo", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual, contorno_atual)
     elif figura_nova[0] == "Oval":
-        figura_nova = ("Oval", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual)
+        figura_nova = ("Oval", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual, contorno_atual)
     elif figura_nova[0] == "Retângulo":
-        figura_nova = ("Retângulo", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual)
+        figura_nova = ("Retângulo", (figura_nova[1][0], figura_nova[1][1], event.x, event.y), cor_atual, contorno_atual)
     elif figura_nova[0] == "Quadrado": #aq temos que fazer ter o msm tamanho em todos os lados,
             x_inicio, y_inicio = figura_nova[1][0], figura_nova[1][1]
 
@@ -55,7 +59,7 @@ def atualizar_figura_nova(event):
             tamanho = max(abs(dist_x), abs(dist_y)) #aq pegamos o maior lado
             novo_x = x_inicio + tamanho * (1 if dist_x >= 0 else -1) #aq garantimos q o quadrado vai ser desenhado
             novo_y = y_inicio + tamanho * (1 if dist_y >= 0 else -1) #na posição certa
-            figura_nova = ("Quadrado", (x_inicio, y_inicio, novo_x, novo_y), cor_atual)
+            figura_nova = ("Quadrado", (x_inicio, y_inicio, novo_x, novo_y), cor_atual, contorno_atual)
     desenhar_figuras()
     desenhar_figura_nova()
 
@@ -67,44 +71,46 @@ def incluir_figura_nova(event):
 
 def desenhar_figuras():
     canvas.delete("all")
-    for fig, values, cor_salva in figuras:
+    for fig, values, cor_salva, contorno_salvo in figuras:
         cor_tk = dic_de_cores.get(cor_salva, "black")
+        contorno_tk= dic_de_cores.get(contorno_salvo, "black")
 
         if fig == "linha":
-            canvas.create_line(values[0], values[1], values[2], values[3], fill=cor_tk if cor_tk != "" else "black")
+            canvas.create_line(values[0], values[1], values[2], values[3], fill=contorno_tk)
         elif fig == "Circulo":
             raio = ((values[0]- values[2])**2+ (values[1] - values[3])**2) ** 0.5
-            canvas.create_oval(values[0]- raio, values[1]- raio, values[0]+ raio, values[1]+ raio, fill=cor_tk, outline=cor_tk if cor_tk != "" else "black")
+            canvas.create_oval(values[0]- raio, values[1]- raio, values[0]+ raio, values[1]+ raio, fill=cor_tk, outline=contorno_tk)
         elif fig == "Oval":
-            canvas.create_oval(values[0], values[1], values[2], values[3], fill=cor_tk, outline=cor_tk if cor_tk != "" else "black")
+            canvas.create_oval(values[0], values[1], values[2], values[3], fill=cor_tk, outline=contorno_tk)
         elif fig == "Retângulo":
-            canvas.create_rectangle(values[0], values[1], values[2], values[3], fill=cor_tk, outline=cor_tk if cor_tk != "" else "black")
+            canvas.create_rectangle(values[0], values[1], values[2], values[3], fill=cor_tk, outline=contorno_tk)
         elif fig == "Quadrado":
-            canvas.create_rectangle(values[0], values[1], values[2], values[3], fill=cor_tk, outline=cor_tk if cor_tk != "" else "black")
+            canvas.create_rectangle(values[0], values[1], values[2], values[3], fill=cor_tk, outline=contorno_tk)
         else : # fig == "rabisco"
-            canvas.create_line(values, fill=cor_tk if cor_tk != "" else "black")
+            canvas.create_line(values, fill= contorno_tk)
 
 def desenhar_figura_nova():
-    fig, values, cor_salva = figura_nova
+    fig, values, cor_salva, contorno_salvo = figura_nova
 
     cor_tk = dic_de_cores.get(cor_salva, "black")
+    contorno_tk= dic_de_cores.get(contorno_salvo, "black")
     
     if fig == "linha":
-        canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2), fill=cor_tk if cor_tk != "" else "black")
+        canvas.create_line(values[0], values[1], values[2], values[3], dash=(4, 2), fill= contorno_tk)
     elif fig == "Circulo":
         raio = ((values[0]- values[2])**2+ (values[1] - values[3])**2) ** 0.5
-        canvas.create_oval((values[0]- raio, values[1]- raio, values[0]+ raio, values[1]+ raio), dash=(4,2),fill=cor_tk, outline=cor_tk  if cor_tk != "" else "black")
+        canvas.create_oval((values[0]- raio, values[1]- raio, values[0]+ raio, values[1]+ raio), dash=(4,2),fill=cor_tk, outline=contorno_tk)
     elif fig == "Oval":
-        canvas.create_oval(values[0], values[1], values[2], values[3], dash=(4, 2), fill=cor_tk, outline=cor_tk if cor_tk != "" else "black")
+        canvas.create_oval(values[0], values[1], values[2], values[3], dash=(4, 2), fill=cor_tk, outline=contorno_tk)
     elif fig == "Retângulo":
-        canvas.create_rectangle(values[0], values[1], values[2], values[3], dash= (4,2), fill=cor_tk, outline=cor_tk if cor_tk != "" else "black")
+        canvas.create_rectangle(values[0], values[1], values[2], values[3], dash= (4,2), fill=cor_tk, outline=contorno_tk)
     elif fig == "Quadrado":
-        canvas.create_rectangle(values[0], values[1], values[2], values[3], dash= (4,2), fill=cor_tk, outline=cor_tk if cor_tk != "" else "black")
+        canvas.create_rectangle(values[0], values[1], values[2], values[3], dash= (4,2), fill=cor_tk, outline=contorno_tk)
     else : # fig == "rabisco"
-        canvas.create_line(values, dash=(4, 2), fill=cor_tk if cor_tk != "" else "black")
+        canvas.create_line(values, dash=(4, 2), fill=contorno_tk)
 
 def incompleta(figura):
-    fig, values, cor = figura
+    fig, values, cor, contorno = figura
     if fig == "rabisco":
         return len(values) <= 1
     else :
