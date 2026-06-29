@@ -128,28 +128,39 @@ root.geometry("800x650")
 paddings = {'padx': 5, 'pady': 5} 
 
 # label
-label = ttk.Label(frame,  text='Minha nova arte')
-label.grid(column=0, row=0, sticky=W, **paddings)
+#label = ttk.Label(frame,  text='Minha nova arte')
+#label.grid(column=0, row=0, sticky=W, **paddings)
 
 #*****Menu de Figuras*****#
 tipo_figura_var = StringVar(root) # Guarda o tipo de figura selecionado no option menu (já vou pegar o embalo e fazer quadrado tb)
 option_menu = ttk.OptionMenu(frame, tipo_figura_var,
                              'Linha', 'Linha', 'Rabisco', "Circulo", "Oval", "Retângulo", "Quadrado") #aq linha é repetida pq é exigido deixar a opção padrão duas vezes
-option_menu.grid(column=1, row=0, sticky=W, **paddings)
+label_figura = ttk.Label(frame, text="Tipo de figura")
+label_figura.grid(column=1, row=0, sticky=W, **paddings)
+option_menu.grid(column=1, row=1, sticky=W, **paddings)
 
 #*****Menu de cores de contorno*****#
+contorno_var = StringVar(root) #guarda a cor selecionada
+contorno_var.set("Preto") #cor padrão
+option_menu_contorno = ttk.OptionMenu(frame, contorno_var,
+                                      "Preto", "Preto", "Vermelho", "Verde", "Azul", "Amarelo", "Rosa", "Cor de burro quando foge")
+label_contorno = ttk.Label(frame, text="Cor do contorno")
+label_contorno.grid(column=2, row=0, sticky=W, **paddings)
+option_menu_contorno.grid(column=2, row=1, sticky=W, **paddings)
 
 #*****Menu de cores de preenchimento*****#
 cores_var = StringVar(root) #guarda a cor selecionada
 cores_var.set("Preto") #cor padrão para começar
 option_menu_cores = ttk.OptionMenu(frame, cores_var,
                                    "Sem preenchimento", "Sem preenchimento", "Preto", "Vermelho", "Verde", "Azul", "Amarelo", "Rosa", "Cor de burro quando foge")
-option_menu_cores.grid(column=2, row=0, sticky=W, **paddings)
+label_menu_cores = ttk.Label(frame, text="Cor de preenchimento")
+label_menu_cores.grid(column=3, row=0, sticky=W, **paddings)
+option_menu_cores.grid(column=3, row=1, sticky=W, **paddings)
 
 #*******************************************#
 # Área de desenho
 canvas = Canvas(frame, bg='white', width=600, height=600)
-canvas.grid(column=0, row=1, columnspan=3, sticky=W, **paddings)
+canvas.grid(column=0, row=2, columnspan=4, sticky=W, **paddings)
 
 frame.pack()
 
